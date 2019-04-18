@@ -20,8 +20,8 @@ main {}
 
 .game-area {
   margin: 0 auto;
-  height: 600px;
-  width: 300px;
+  height: 660px;
+  width: 330px;
   background: dodgerblue;
 }
 
@@ -32,8 +32,8 @@ main {}
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
-  height: 300px;
-  width: 300px;
+  height: 330px;
+  width: 330px;
   border: 1px solid black;
 }
 
@@ -42,9 +42,23 @@ main {}
   flex-flow: row wrap;
   justify-content: center;
   align-items: center;
-  height: 300px;
-  width: 300px;
+  height: 330px;
+  width: 330px;
   border: 1px solid black;
+}
+
+.col-num {
+  border: 1px solid gray;
+  height: 29.5px;
+  width: 29.5px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.row-char {
+  border: 1px solid gray;
+  height: 29.5px;
+  width: 29.5px;
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .tile {

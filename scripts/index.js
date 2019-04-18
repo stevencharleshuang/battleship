@@ -14,13 +14,21 @@ $(document).ready(() => {
    * @description Creates the Player and Opponent boards and fills with tiles
    */
   const createBoards = () => {
-    for (let i = 0; i < 100; i += 1) {
+    let rowCharCode = 65;
+
+    for (let i = 0; i < 121; i += 1) {
+
+      let blankTile = 
+        `<div 
+          class="tile blank-tile"
+          data-type="blank" 
+          id="${i}">
+        </div>`;
+
       let playerTile = 
         `<div 
           class="tile player-tile"
           data-type="player" 
-          data-tile="${i}" 
-          data-id="${i}" 
           id="player-${i}">
         </div>`;
 
@@ -28,16 +36,37 @@ $(document).ready(() => {
         `<div 
           class="tile opponent-tile"
           data-type="opponent" 
-          data-tile="${i}" 
-          data-id="${i}" 
           id="opponent-${i}">
         </div>`;
 
-      $($opponentBoard).append(opponentTile);
-      $($playerBoard).append(playerTile);
+      let colNum = 
+        `<div
+          class="col-num"
+        >${i}</div>`
+
+      let rowNum = 
+        `<div
+          class="row-char"
+        >${String.fromCharCode(rowCharCode)}</div>`;
+
+      if (i === 0) {
+        $($opponentBoard).append(blankTile);
+        $($playerBoard).append(blankTile);
+      } else if (i < 11) {
+        $($opponentBoard).append(colNum);
+        $($playerBoard).append(colNum);
+      } else if (i % 11 === 0) {
+        $($opponentBoard).append(rowNum);
+        $($playerBoard).append(rowNum);
+        rowCharCode += 1;
+      } else {
+        $($opponentBoard).append(opponentTile);
+        $($playerBoard).append(playerTile);
+      }
     }
     
     // Update jQ Selector Vars
+    $tile = $('.tile');
     $playerTile = $('.player-tile');
     $opponentTile = $('.opponent-tile');
 
