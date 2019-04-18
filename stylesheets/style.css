@@ -93,3 +93,16 @@ footer {
   cursor: pointer;
 }
 
+.peg {
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+}
+
+.white-peg {
+  background: white;
+}
+
+.red-peg {
+  background: red;
+}

@@ -12,6 +12,8 @@ $(document).ready(() => {
   // JS Var Decs
   let opponentShipsArr = [];
   let playerShipsArr = [];
+  let whitePeg = `<div class="peg white-peg"></div>`;
+  let redPeg = `<div class="peg white-peg"></div>`;
 
   /**
    * @function createBoards
@@ -92,6 +94,10 @@ $(document).ready(() => {
    */
   const handleOpponentTileClick = (e) => {
     console.log('Opponent tile clicked', e);
+    let $selectedTile = $(e.target)[0];
+
+    $($selectedTile).append(whitePeg);
+    console.log($selectedTile);
   };
 
   /**
