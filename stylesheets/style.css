@@ -19,13 +19,19 @@ header {}
 main {}
 
 .game-area {
+  padding: 10px 0 0;
   margin: 0 auto;
-  height: 660px;
+  height: auto;
   width: 330px;
   background: dodgerblue;
 }
 
-.game-board {}
+.game-board {
+}
+
+.board {
+  margin: 10px auto;
+}
 
 #player-board {
   display: flex;
@@ -62,10 +68,17 @@ main {}
 }
 
 .tile {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   border: 1px solid gray;
   height: 29.5px;
   width: 29.5px;
   background: rgba(255, 255, 255, 0.2);
+}
+
+.marker {
+  background: rgba(0, 0, 0, 0.3);
 }
 
 footer {
@@ -75,3 +88,8 @@ footer {
   position: fixed;
   bottom: 0;
 }
+
+.opponent-tile:hover {
+  cursor: pointer;
+}
+

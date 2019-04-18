@@ -9,6 +9,10 @@ $(document).ready(() => {
     let $opponentTile;
     let $tile;
 
+  // JS Var Decs
+  let opponentShipsArr = [];
+  let playerShipsArr = [];
+
   /**
    * @function createBoards
    * @description Creates the Player and Opponent boards and fills with tiles
@@ -17,10 +21,12 @@ $(document).ready(() => {
     let rowCharCode = 65;
 
     for (let i = 0; i < 121; i += 1) {
+      let col = i % 11;
+      let row = String.fromCharCode(rowCharCode - 1);
 
       let blankTile = 
         `<div 
-          class="tile blank-tile"
+          class="tile marker blank-tile"
           data-type="blank" 
           id="${i}">
         </div>`;
@@ -28,26 +34,30 @@ $(document).ready(() => {
       let playerTile = 
         `<div 
           class="tile player-tile"
-          data-type="player" 
-          id="player-${i}">
+          data-type="player"
+          data-col="${col}"
+          data-row="${row}" 
+          id="player-tile-${row}${col}">
         </div>`;
 
       let opponentTile = 
         `<div 
           class="tile opponent-tile"
           data-type="opponent" 
-          id="opponent-${i}">
+          data-col="${col}"
+          data-row="${row}" 
+          id="opponent-tile-${row}${col}">
         </div>`;
 
       let colNum = 
         `<div
-          class="col-num"
-        >${i}</div>`
+          class="tile marker col-num">
+        ${i}</div>`;
 
       let rowNum = 
         `<div
-          class="row-char"
-        >${String.fromCharCode(rowCharCode)}</div>`;
+          class="tile marker row-char">
+        ${String.fromCharCode(rowCharCode)}</div>`;
 
       if (i === 0) {
         $($opponentBoard).append(blankTile);
@@ -93,6 +103,6 @@ $(document).ready(() => {
     console.log('Player tile clicked', e);
   };
 
-
   createBoards();
 });
+
