@@ -12,36 +12,47 @@ $(document).ready(() => {
   // JS Var Decs
   let opponentShips = {
     carrier: {
-      orientation: '',
-      position: [],
       holes: 5,
-      hits: 0
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
     },
     battleship: {
-      orientation: '',
-      position: [],
       holes: 4,
-      hits: 0
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
     },
     cruiser: {
-      orientation: '',
-      position: [],
       holes: 3,
-      hits: 0
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
     },
     submarine: {
-      orientation: '',
-      position: [],
       holes: 3,
-      hits: 0
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
     },
     destroyer: {
-      orientation: '',
-      position: [],
       holes: 2,
-      hits: 0
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
     }
   };
+
   let opponentShipsArr = [];
   let playerShipsArr = [];
   let playerSelectedTilesArr = [];
@@ -122,7 +133,8 @@ $(document).ready(() => {
 
   const placeOppShips = () => {
     let shipOrientation;
-    let placements = [];
+    let placedColsArr = [];
+    let placedRowsArr = [];
 
     // Iterate through opponent ships 
     // For every ship in opponent ships
@@ -134,7 +146,7 @@ $(document).ready(() => {
       
       // Get a random number 1 or 2 to determine ship orientation. 
       // 1 === vertical, 2 === horizontal 
-
+      // Temporarily default to vertical placement for development purposes
       // shipOrientation = Math.floor(Math.random() * 2) + 1;
       shipOrientation = 1;
 
@@ -143,20 +155,39 @@ $(document).ready(() => {
       // Split conditional based on orientation
       if (curShip.orientation === 'vertical') {
         placementCol = Math.floor(Math.random() * 10) + 1;
-        console.log({placementCol});
 
+        // Max and min for deriving char codes randomly within range
         let max = 75 - holes;
         let min = 64;
         let randomRowStart = Math.floor(Math.random() * (max - min)) + min;
 
-        // Iterate for the number of holes of each ship
-        for (let i = holes; i > 0; i -= 1) {
-          // Char Code Range 65 - 74
-          // Max Row Value must be 74 - holes
-          placementRow = String.fromCharCode(randomRowStart + i);
-          curShip.position.push(`${placementRow}${placementCol}`);
-          // console.log('placement', { max, i, randomRowStart, placementRow }, curShip.position);
+        const attemptVerticalPlacement = (row, col) => {
+          // Conditional to go into validation if there exists a position in the column already
+          // Else proceed with placement
+          if (placedColsArr.indexOf(col) > -1) {
+            // Potential overlap, resolve
+            console.log('possible overlap');
+
+            col += 1;
+            attemptVerticalPlacement(row, col);
+          } else {
+            // No potential overlap, proceed with placement
+            curShip.placementCol = col;
+            curShip.placementRow = row;
+            // Iterate for the number of holes of each ship
+            // For loop commits placement
+            // Only proceed if validation to prevent ship overlap passes
+            for (let i = 1; i <= holes; i += 1) {
+              // Because we are placing vertically, increment the row
+              placedColsArr.push(col);
+              placedRowsArr.push(row + i);
+              let position = `${String.fromCharCode(row + i)}${col}`;
+              curShip.position.push(position);
+            }
+          }
         }
+
+        attemptVerticalPlacement(randomRowStart, placementCol);
 
         opponentShipsArr = opponentShipsArr.concat(curShip.position);
         // Else horizonatal 
@@ -165,7 +196,7 @@ $(document).ready(() => {
         console.log('place by row');
       }
     }
-    console.log({ opponentShips, opponentShipsArr });
+    console.log({ opponentShips, opponentShipsArr, placedColsArr, placedRowsArr });
   }
 
   /**
@@ -223,24 +254,4 @@ $(document).ready(() => {
   createBoards();
   placeOppShips();
 });
-
-/* 
-const shipTypes = {
-  carrier: {
-    holes: 5
-  },
-  battleship: {
-    holes: 4
-  },
-  cruiser: {
-    holes: 3
-  },
-  submarine: {
-    holes: 3
-  },
-  destroyer: {
-    holes: 2
-  }
-}
-*/
 
