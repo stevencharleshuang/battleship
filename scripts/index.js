@@ -143,20 +143,29 @@ $(document).ready(() => {
       let holes = curShip.holes;
       let placementCol;
       let placementRow;
+      let colMax;
+      let colMin;
+      let rowMax;
+      let rowMin;
       
       // Get a random number 1 or 2 to determine ship orientation. 
       // 1 === vertical, 2 === horizontal 
       // Temporarily default to vertical placement for development purposes
-      // shipOrientation = Math.floor(Math.random() * 2) + 1;
-      shipOrientation = 1;
+      shipOrientation = Math.floor(Math.random() * 2) + 1;
+      // shipOrientation = 1;
 
       // Set the ship's orientation value
       shipOrientation === 1 ? curShip.orientation = 'vertical' : curShip.orientation = 'horizontal';
 
       const attemptPlacement = (row, col, orientation) => {
+        console.log('attemptPlacement(): ', { row, col, orientation });
+        let hasOverlap;
+        orientation === 'vertical' ? 
+          hasOverlap = placedColsArr.indexOf(col) > -1 :
+          hasOverlap = placedRowsArr.indexOf(row) > -1;
         // Conditional to go into validation if there exists a position in the column already
         // Else proceed with placement
-        if (placedColsArr.indexOf(col) > -1) {
+        if (hasOverlap) {
           // Potential overlap, resolve
           console.log('possible overlap');
 
@@ -179,7 +188,10 @@ $(document).ready(() => {
               placedRowsArr.push(row);
             }
 
-            let position = `${String.fromCharCode(row + i)}${col}`;
+            let position = 
+              orientation === 'vertical' ? 
+                `${String.fromCharCode(row + i)}${col}` :
+                `${String.fromCharCode(row)}${col + i}`;
             curShip.position.push(position);
           }
         }
@@ -187,20 +199,29 @@ $(document).ready(() => {
 
       // Split conditional based on orientation
       if (curShip.orientation === 'vertical') {
-        placementCol = Math.floor(Math.random() * 10) + 1;
+        colMax = 10;
+        colMin = 1;
+        placementCol = Math.floor(Math.random() * (colMax - colMin)) + colMin;
 
         // Max and min for deriving char codes randomly within range
-        let max = 75 - holes;
-        let min = 64;
-        let randomRowStart = Math.floor(Math.random() * (max - min)) + min;
+        rowMax = 75 - holes;
+        rowMin = 64;
+        let randomRowStart = Math.floor(Math.random() * (rowMax - rowMin)) + rowMin;
 
         attemptPlacement(randomRowStart, placementCol, 'vertical');
-
         opponentShipsArr = opponentShipsArr.concat(curShip.position);
         // Else horizonatal 
       } else {
-        let placementRow;
         console.log('place by row');
+        rowMax = 75;
+        rowMin = 64;
+        placementRow = Math.floor(Math.random() * (rowMax - rowMin)) + rowMin;
+        colMax = 11 - holes;
+        colMin = 0;
+        let randomColStart = Math.floor(Math.random() * (colMax - colMin)) + colMin;
+
+        attemptPlacement(placementRow, randomColStart, 'horizontal');
+        opponentShipsArr = opponentShipsArr.concat(curShip.position);
       }
     }
     console.log({ opponentShips, opponentShipsArr, placedColsArr, placedRowsArr });
