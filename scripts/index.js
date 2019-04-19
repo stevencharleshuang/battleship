@@ -10,8 +10,11 @@ $(document).ready(() => {
     let $tile;
 
   // JS Var Decs
-  let opponentShipsArr = [];
+  let opponentShipsArr = ['G5', 'G6', 'G7'];
   let playerShipsArr = [];
+  let playerSelectedTilesArr = [];
+  let whitePeg = `<div class="peg white-peg"></div>`;
+  let redPeg = `<div class="peg red-peg"></div>`;
 
   /**
    * @function createBoards
@@ -86,12 +89,46 @@ $(document).ready(() => {
   };
 
   /**
+   * @function checkHit
+   * @description Checks the ship arrs depending on player type and returns true if there's a hit or false
+   * @param {string} targetType 
+   * @param {string} tileID 
+   */
+  const checkHit = (targetType, tileID) => {
+    // console.log(targetType, tileID);
+    if (targetType === 'opponent') {
+      if (opponentShipsArr.indexOf(tileID) > -1) {
+        return true;
+      }
+    } else {
+      if (playerShipsArr.indexOf(tileID) > -1) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  /**
    * @function handleOpponentTileClick
    * @description Handles the click event for opponent tiles
    * @param {object} e 
    */
   const handleOpponentTileClick = (e) => {
     console.log('Opponent tile clicked', e);
+    let $selectedTile = $(e.target)[0];
+    let identifier = `${$selectedTile.dataset.row}${$selectedTile.dataset.col}`;
+
+    if ($selectedTile.classList[0] === 'tile' && 
+      playerSelectedTilesArr.indexOf(identifier) === -1) {
+      playerSelectedTilesArr.push(identifier);
+      
+      if (!checkHit('opponent', identifier)) {
+        $($selectedTile).append(whitePeg)
+      } else {
+        $($selectedTile).append(redPeg);
+      }
+    }
+    console.log($selectedTile);
   };
 
   /**
