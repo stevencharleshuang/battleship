@@ -152,6 +152,39 @@ $(document).ready(() => {
 
       // Set the ship's orientation value
       shipOrientation === 1 ? curShip.orientation = 'vertical' : curShip.orientation = 'horizontal';
+
+      const attemptPlacement = (row, col, orientation) => {
+        // Conditional to go into validation if there exists a position in the column already
+        // Else proceed with placement
+        if (placedColsArr.indexOf(col) > -1) {
+          // Potential overlap, resolve
+          console.log('possible overlap');
+
+          orientation === 'vertical' ? col += 1 : row += 1;
+          attemptPlacement(row, col, orientation);
+        } else {
+          // No potential overlap, proceed with placement
+          curShip.placementCol = col;
+          curShip.placementRow = row;
+          // Iterate for the number of holes of each ship
+          // For loop commits placement
+          // Only proceed if validation to prevent ship overlap passes
+          for (let i = 1; i <= holes; i += 1) {
+            // Because we are placing vertically, increment the row
+            if (orientation === 'vertical') {
+              placedColsArr.push(col);
+              placedRowsArr.push(row + i);
+            } else if (orientation === 'horizontal') {
+              placedColsArr.push(col + i);
+              placedRowsArr.push(row);
+            }
+
+            let position = `${String.fromCharCode(row + i)}${col}`;
+            curShip.position.push(position);
+          }
+        }
+      }
+
       // Split conditional based on orientation
       if (curShip.orientation === 'vertical') {
         placementCol = Math.floor(Math.random() * 10) + 1;
@@ -161,33 +194,7 @@ $(document).ready(() => {
         let min = 64;
         let randomRowStart = Math.floor(Math.random() * (max - min)) + min;
 
-        const attemptVerticalPlacement = (row, col) => {
-          // Conditional to go into validation if there exists a position in the column already
-          // Else proceed with placement
-          if (placedColsArr.indexOf(col) > -1) {
-            // Potential overlap, resolve
-            console.log('possible overlap');
-
-            col += 1;
-            attemptVerticalPlacement(row, col);
-          } else {
-            // No potential overlap, proceed with placement
-            curShip.placementCol = col;
-            curShip.placementRow = row;
-            // Iterate for the number of holes of each ship
-            // For loop commits placement
-            // Only proceed if validation to prevent ship overlap passes
-            for (let i = 1; i <= holes; i += 1) {
-              // Because we are placing vertically, increment the row
-              placedColsArr.push(col);
-              placedRowsArr.push(row + i);
-              let position = `${String.fromCharCode(row + i)}${col}`;
-              curShip.position.push(position);
-            }
-          }
-        }
-
-        attemptVerticalPlacement(randomRowStart, placementCol);
+        attemptPlacement(randomRowStart, placementCol, 'vertical');
 
         opponentShipsArr = opponentShipsArr.concat(curShip.position);
         // Else horizonatal 
