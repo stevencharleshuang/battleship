@@ -10,7 +10,39 @@ $(document).ready(() => {
     let $tile;
 
   // JS Var Decs
-  let opponentShipsArr = ['G5', 'G6', 'G7'];
+  let opponentShips = {
+    carrier: {
+      orientation: '',
+      position: [],
+      holes: 5,
+      hits: 0
+    },
+    battleship: {
+      orientation: '',
+      position: [],
+      holes: 4,
+      hits: 0
+    },
+    cruiser: {
+      orientation: '',
+      position: [],
+      holes: 3,
+      hits: 0
+    },
+    submarine: {
+      orientation: '',
+      position: [],
+      holes: 3,
+      hits: 0
+    },
+    destroyer: {
+      orientation: '',
+      position: [],
+      holes: 2,
+      hits: 0
+    }
+  };
+  let opponentShipsArr = [];
   let playerShipsArr = [];
   let playerSelectedTilesArr = [];
   let whitePeg = `<div class="peg white-peg"></div>`;
@@ -88,6 +120,48 @@ $(document).ready(() => {
     $($opponentTile).on('click', handleOpponentTileClick);
   };
 
+  const placeOppShips = () => {
+    let shipOrientation;
+    let placements = [];
+
+    // Iterate through opponent ships 
+    // For every ship in opponent ships
+    for (let ship in opponentShips) {
+      let curShip = opponentShips[ship];
+      let holes = curShip.holes;
+      let placementCol;
+      let placementRow;
+      
+      // Get a random number 1 or 2 to determine ship orientation. 
+      // 1 === vertical, 2 === horizontal 
+
+      // shipOrientation = Math.floor(Math.random() * 2) + 1;
+      shipOrientation = 1;
+
+      // Set the ship's orientation value
+      shipOrientation === 1 ? curShip.orientation = 'vertical' : curShip.orientation = 'horizontal';
+      // Split conditional based on orientation
+      if (curShip.orientation === 'vertical') {
+        placementCol = Math.floor(Math.random() * 10) + 1;
+        console.log({placementCol});
+
+        // Iterate for the number of holes of each ship
+        for (let i = holes; i > 0; i -= 1) {
+          placementRow = String.fromCharCode(64 + i);
+          console.log('placement', i, placementRow);
+          opponentShipsArr.push(`${placementRow}${placementCol}`);
+        }
+        // Else horizonatal 
+      } else {
+        let placementRow;
+        console.log('place by row');
+      }
+    }
+
+
+    console.log({ opponentShips, opponentShipsArr });
+  }
+
   /**
    * @function checkHit
    * @description Checks the ship arrs depending on player type and returns true if there's a hit or false
@@ -141,5 +215,26 @@ $(document).ready(() => {
   };
 
   createBoards();
+  placeOppShips();
 });
+
+/* 
+const shipTypes = {
+  carrier: {
+    holes: 5
+  },
+  battleship: {
+    holes: 4
+  },
+  cruiser: {
+    holes: 3
+  },
+  submarine: {
+    holes: 3
+  },
+  destroyer: {
+    holes: 2
+  }
+}
+*/
 
