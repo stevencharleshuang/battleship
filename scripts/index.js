@@ -145,20 +145,26 @@ $(document).ready(() => {
         placementCol = Math.floor(Math.random() * 10) + 1;
         console.log({placementCol});
 
+        let max = 75 - holes;
+        let min = 64;
+        let randomRowStart = Math.floor(Math.random() * (max - min)) + min;
+
         // Iterate for the number of holes of each ship
         for (let i = holes; i > 0; i -= 1) {
-          placementRow = String.fromCharCode(64 + i);
-          console.log('placement', i, placementRow);
-          opponentShipsArr.push(`${placementRow}${placementCol}`);
+          // Char Code Range 65 - 74
+          // Max Row Value must be 74 - holes
+          placementRow = String.fromCharCode(randomRowStart + i);
+          curShip.position.push(`${placementRow}${placementCol}`);
+          // console.log('placement', { max, i, randomRowStart, placementRow }, curShip.position);
         }
+
+        opponentShipsArr = opponentShipsArr.concat(curShip.position);
         // Else horizonatal 
       } else {
         let placementRow;
         console.log('place by row');
       }
     }
-
-
     console.log({ opponentShips, opponentShipsArr });
   }
 
