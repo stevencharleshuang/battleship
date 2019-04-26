@@ -53,6 +53,7 @@ $(document).ready(() => {
     }
   };
 
+  let opponentBoardArr = [[],[],[],[],[],[],[],[],[],[],[]];
   let opponentShipsArr = [];
   let playerShipsArr = [];
   let playerSelectedTilesArr = [];
@@ -64,62 +65,70 @@ $(document).ready(() => {
    * @description Creates the Player and Opponent boards and fills with tiles
    */
   const createBoards = () => {
-    let rowCharCode = 65;
+    let rowCharCode = 64;
 
-    for (let i = 0; i < 121; i += 1) {
-      let col = i % 11;
-      let row = String.fromCharCode(rowCharCode - 1);
+    for (let i = 0; i < 11; i += 1) {
+      for (let j = 0; j < 11; j += 1) {
+        
+        let col = j;
+        let row = String.fromCharCode(rowCharCode);
 
-      let blankTile = 
-        `<div 
-          class="tile marker blank-tile"
-          data-type="blank" 
-          id="${i}">
-        </div>`;
+        let blankTile = 
+          `<div 
+            class="tile marker blank-tile"
+            data-type="blank" 
+            id="${i}">
+          </div>`;
 
-      let playerTile = 
-        `<div 
-          class="tile player-tile"
-          data-type="player"
-          data-col="${col}"
-          data-row="${row}" 
-          id="player-tile-${row}${col}">
-        </div>`;
+        let playerTile = 
+          `<div 
+            class="tile player-tile"
+            data-type="player"
+            data-col="${col}"
+            data-row="${row}" 
+            id="player-tile-${row}${col}">
+          </div>`;
 
-      let opponentTile = 
-        `<div 
-          class="tile opponent-tile"
-          data-type="opponent" 
-          data-col="${col}"
-          data-row="${row}" 
-          id="opponent-tile-${row}${col}">
-        </div>`;
+        let opponentTile = 
+          `<div 
+            class="tile opponent-tile"
+            data-type="opponent" 
+            data-col="${col}"
+            data-row="${row}" 
+            id="opponent-tile-${row}${col}">
+          </div>`;
 
-      let colNum = 
-        `<div
-          class="tile marker col-num">
-        ${i}</div>`;
+        let colNum = 
+          `<div
+            class="tile marker col-num">
+          ${col}</div>`;
 
-      let rowNum = 
-        `<div
-          class="tile marker row-char">
-        ${String.fromCharCode(rowCharCode)}</div>`;
+        let rowChar = 
+          `<div
+            class="tile marker row-char">
+          ${String.fromCharCode(rowCharCode)}</div>`;
 
-      if (i === 0) {
-        $($opponentBoard).append(blankTile);
-        $($playerBoard).append(blankTile);
-      } else if (i < 11) {
-        $($opponentBoard).append(colNum);
-        $($playerBoard).append(colNum);
-      } else if (i % 11 === 0) {
-        $($opponentBoard).append(rowNum);
-        $($playerBoard).append(rowNum);
-        rowCharCode += 1;
-      } else {
-        $($opponentBoard).append(opponentTile);
-        $($playerBoard).append(playerTile);
+        if (i === 0 && j === 0) {
+          opponentBoardArr[i].push(null)
+          $($opponentBoard).append(blankTile);
+          $($playerBoard).append(blankTile);
+        } else if (i === 0 && j > 0) {
+          opponentBoardArr[i].push(col);
+          $($opponentBoard).append(colNum);
+          $($playerBoard).append(colNum);
+        } else if (j === 0) {
+          opponentBoardArr[i].push(row);
+          $($opponentBoard).append(rowChar);
+          $($playerBoard).append(rowChar);
+        } else {
+          opponentBoardArr[i].push(j);
+          $($opponentBoard).append(opponentTile);
+          $($playerBoard).append(playerTile);
+        }
       }
+      rowCharCode += 1;
     }
+    console.log({ opponentBoardArr });
     
     // Update jQ Selector Vars
     $tile = $('.tile');
@@ -280,6 +289,6 @@ $(document).ready(() => {
   };
 
   createBoards();
-  placeOppShips();
+  // placeOppShips();
 });
 
