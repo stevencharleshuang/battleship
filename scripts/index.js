@@ -144,100 +144,94 @@ $(document).ready(() => {
     $($opponentTile).on('click', handleOpponentTileClick);
   };
 
-  const placeOppShips = () => {
-    let shipOrientation;
-    let placedColsArr = [];
-    let placedRowsArr = [];
+  /**
+   * @function attemptPlacement
+   * @param {number} startX The X coordinate to start attempting ship placement
+   * @param {number} startY The Y coordinate to start attempting ship placement
+   * @param {string} orientation The orientation to attempt ship placement, either horizontal or vertical
+   * @param {number} size The size of the ship to be placed
+   * @param {string} ship The ship being placed
+   */
+  const attemptPlacement = (startX, startY, orientation, size, ship) => {
+    const colMax = 10;
+    const rowMax = 10;
+    let end;
+    let isClear = true;
 
-    // Iterate through opponent ships 
-    // For every ship in opponent ships
-    for (let ship in opponentShips) {
-      let curShip = opponentShips[ship];
-      let holes = curShip.holes;
-      let placementCol;
-      let placementRow;
-      let colMax;
-      let colMin;
-      let rowMax;
-      let rowMin;
-      
-      // Get a random number 1 or 2 to determine ship orientation. 
-      // 1 === vertical, 2 === horizontal 
-      // Temporarily default to vertical placement for development purposes
-      shipOrientation = Math.floor(Math.random() * 2) + 1;
-      // shipOrientation = 1;
-
-      // Set the ship's orientation value
-      shipOrientation === 1 ? curShip.orientation = 'vertical' : curShip.orientation = 'horizontal';
-
-      const attemptPlacement = (row, col, orientation) => {
-        console.log('attemptPlacement(): ', { row, col, orientation });
-        let hasOverlap;
-        orientation === 'vertical' ? 
-          hasOverlap = placedColsArr.indexOf(col) > -1 :
-          hasOverlap = placedRowsArr.indexOf(row) > -1;
-        // Conditional to go into validation if there exists a position in the column already
-        // Else proceed with placement
-        if (hasOverlap) {
-          // Potential overlap, resolve
-          console.log('possible overlap');
-
-          orientation === 'vertical' ? col += 1 : row += 1;
-          attemptPlacement(row, col, orientation);
-        } else {
-          // No potential overlap, proceed with placement
-          curShip.placementCol = col;
-          curShip.placementRow = row;
-          // Iterate for the number of holes of each ship
-          // For loop commits placement
-          // Only proceed if validation to prevent ship overlap passes
-          for (let i = 1; i <= holes; i += 1) {
-            // Because we are placing vertically, increment the row
-            if (orientation === 'vertical') {
-              placedColsArr.push(col);
-              placedRowsArr.push(row + i);
-            } else if (orientation === 'horizontal') {
-              placedColsArr.push(col + i);
-              placedRowsArr.push(row);
-            }
-
-            let position = 
-              orientation === 'vertical' ? 
-                `${String.fromCharCode(row + i)}${col}` :
-                `${String.fromCharCode(row)}${col + i}`;
-            curShip.position.push(position);
-          }
+    // Split logic by orientation
+    // Attempt horizontal placement
+    if (orientation === 'horizontal') {
+      // Check if there is suffient columns to fully place the ship
+      let colDiff = Math.abs(colMax - startY)
+      if (colDiff < size) {
+        startY = colMax - size;
+        console.log('Updated startY', startY);
+      }
+      end = startY + size;
+      // iterate the board arr by column arr[i][j]
+      for (let i = startY; i < end; i += 1) {
+        if (opponentBoardArr[startX][i] !== null) {
+          isClear = false;
         }
       }
-
-      // Split conditional based on orientation
-      if (curShip.orientation === 'vertical') {
-        colMax = 10;
-        colMin = 1;
-        placementCol = Math.floor(Math.random() * (colMax - colMin)) + colMin;
-
-        // Max and min for deriving char codes randomly within range
-        rowMax = 75 - holes;
-        rowMin = 64;
-        let randomRowStart = Math.floor(Math.random() * (rowMax - rowMin)) + rowMin;
-
-        attemptPlacement(randomRowStart, placementCol, 'vertical');
-        opponentShipsArr = opponentShipsArr.concat(curShip.position);
-        // Else horizonatal 
+      // if the row from startY to startY + size === null, place the ship
+      if (isClear === true) {
+        for (let i = startY; i < end; i += 1) {
+          opponentBoardArr[startX][i] = ship;
+        }
       } else {
-        console.log('place by row');
-        rowMax = 75;
-        rowMin = 64;
-        placementRow = Math.floor(Math.random() * (rowMax - rowMin)) + rowMin;
-        colMax = 11 - holes;
-        colMin = 0;
-        let randomColStart = Math.floor(Math.random() * (colMax - colMin)) + colMin;
-
-        attemptPlacement(placementRow, randomColStart, 'horizontal');
-        opponentShipsArr = opponentShipsArr.concat(curShip.position);
+        console.log('Attempting recursive placement');
+        if (startX <= 5 && startX - 1 > 0) {
+          startX -= 1;
+          console.log('New startX: ', startX);
+          attemptPlacement(startX, startY, orientation, size, ship);
+        } else if (startX > 5 && startX + 1 <= rowMax) {
+          startX += 1;
+          console.log('New startX: ', startX);
+          attemptPlacement(startX, startY, orientation, size, ship);
+        } else {
+          console.log('Placement failed. Failed ship: ', ship, { startY });
+          return;
+        }
       }
+    // Attempt vertical placement
+    } else {
+      let rowDiff = Math.abs(rowMax - startX)
+      if (rowDiff < size) {
+        startX = rowMax - size;
+      }
+      console.log('Updated startX', startX);
     }
-    console.log({ opponentShips, opponentShipsArr, placedColsArr, placedRowsArr });
+    // If attemptPlacement is successful, place the ship
+    // Else call attemptPlacement recursively with start coordinates
+  };
+
+  /**
+   * @function placeOppShips
+   * @description Places the opponent's ships randomly around the opponent's board without overlap
+   */
+  const placeOppShips = () => {
+    // Iterate through opponent ships 
+    // For every ship in opponent ships
+    for (let ship in opponentShips) {      
+      // Generate a randomized orientation for placement
+      let randOrientation = Math.floor(Math.random() * 2) + 1;
+      randOrientation === 1 ? randOrientation = 'horizontal' : randOrientation = 'vertical';
+      
+      randOrientation = 'horizontal'; // For development purposes only. REMOVE
+
+      // Generate a randomized tile to start attempted placement
+      // randStartX will refer to the row and randStartY will refer to the column
+        // Because the smallest ship is the cruiser, occupying 2 tiles, ignore the last row and column in placement
+      let randStartX = Math.floor(Math.random() * 9) + 1;
+      let randStartY = Math.floor(Math.random() * 9) + 1;
+      
+      let size = opponentShips[ship].holes;
+      // Call attemptPlacement(startTile, orientation, size)
+      attemptPlacement(randStartX, randStartY, randOrientation, size, ship);
+      console.log({ randOrientation, randStartX, randStartY, size, ship });
+    }
+    console.log('opponentBoardArr', opponentBoardArr);
   }
 
   /**
@@ -293,6 +287,6 @@ $(document).ready(() => {
   };
 
   createBoards();
-  // placeOppShips();
+  placeOppShips();
 });
 
