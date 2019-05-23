@@ -12,6 +12,7 @@ $(document).ready(() => {
   // JS Var Decs
   let opponentShips = {
     carrier: {
+      name: 'carrier',
       holes: 5,
       hits: 0,
       orientation: '',
@@ -20,6 +21,7 @@ $(document).ready(() => {
       position: []
     },
     battleship: {
+      name: 'battleship',
       holes: 4,
       hits: 0,
       orientation: '',
@@ -28,6 +30,7 @@ $(document).ready(() => {
       position: []
     },
     cruiser: {
+      name: 'cruiser',
       holes: 3,
       hits: 0,
       orientation: '',
@@ -36,6 +39,7 @@ $(document).ready(() => {
       position: []
     },
     submarine: {
+      name: 'submarine',
       holes: 3,
       hits: 0,
       orientation: '',
@@ -44,6 +48,7 @@ $(document).ready(() => {
       position: []
     },
     destroyer: {
+      name: 'destroyer',
       holes: 2,
       hits: 0,
       orientation: '',
@@ -84,8 +89,8 @@ $(document).ready(() => {
           `<div 
             class="tile player-tile"
             data-type="player"
-            data-col="${col}"
-            data-row="${row}" 
+            data-row="${i}" 
+            data-col="${j}"
             id="player-tile-${row}${col}">
           </div>`;
 
@@ -93,8 +98,8 @@ $(document).ready(() => {
           `<div 
             class="tile opponent-tile"
             data-type="opponent" 
-            data-col="${col}"
-            data-row="${row}" 
+            data-row="${i}" 
+            data-col="${j}"
             id="opponent-tile-${row}${col}">
           </div>`;
 
@@ -132,8 +137,7 @@ $(document).ready(() => {
       }
       rowCharCode += 1;
     }
-    console.log({ opponentBoardArr, playerBoardArr });
-    
+        
     // Update jQ Selector Vars
     $tile = $('.tile');
     $playerTile = $('.player-tile');
@@ -180,14 +184,11 @@ $(document).ready(() => {
           opponentBoardArr[startX][i] = ship;
         }
       } else {
-        console.log('Attempting recursive placement');
         if (startX <= 5 && startX - 1 > 0) {
           startX -= 1;
-          console.log('New startX: ', startX);
           attemptPlacement(startX, startY, orientation, size, ship);
         } else if (startX > 5 && startX + 1 <= rowMax) {
           startX += 1;
-          console.log('New startX: ', startX);
           attemptPlacement(startX, startY, orientation, size, ship);
         } else {
           console.log('Placement failed. Failed ship: ', ship, { startY });
@@ -207,6 +208,7 @@ $(document).ready(() => {
         }
       }
       if (isClear === true) {
+        // If there is no ship overlap, place the ship
         for (let i = startX; i < end; i += 1) {
           opponentBoardArr[startY][i] = ship;
         }
@@ -222,10 +224,7 @@ $(document).ready(() => {
           return;
         }
       }
-      console.log('Updated startX', startX);
     }
-    // If attemptPlacement is successful, place the ship
-    // Else call attemptPlacement recursively with start coordinates
   };
 
   /**
@@ -262,16 +261,9 @@ $(document).ready(() => {
    * @param {string} targetType 
    * @param {string} tileID 
    */
-  const checkHit = (targetType, tileID) => {
-    // console.log(targetType, tileID);
-    if (targetType === 'opponent') {
-      if (opponentShipsArr.indexOf(tileID) > -1) {
-        return true;
-      }
-    } else {
-      if (playerShipsArr.indexOf(tileID) > -1) {
-        return true;
-      }
+  const checkHit = (row, col) => {
+    if (opponentBoardArr[row][col] !== null) {
+      return true;
     }
     return false;
   };
@@ -283,20 +275,34 @@ $(document).ready(() => {
    */
   const handleOpponentTileClick = (e) => {
     console.log('Opponent tile clicked', e);
+    let targetRow = e.target.dataset.row;
+    let targetCol = e.target.dataset.col;
     let $selectedTile = $(e.target)[0];
     let identifier = `${$selectedTile.dataset.row}${$selectedTile.dataset.col}`;
+    let oppTargetShip = opponentBoardArr[targetRow][targetCol];
 
-    if ($selectedTile.classList[0] === 'tile' && 
-      playerSelectedTilesArr.indexOf(identifier) === -1) {
-      playerSelectedTilesArr.push(identifier);
-      
-      if (!checkHit('opponent', identifier)) {
-        $($selectedTile).append(whitePeg)
-      } else {
-        $($selectedTile).append(redPeg);
+    console.log(opponentShips[oppTargetShip], { opponentShips });
+
+    // if ($selectedTile.classList[0] === 'tile' && 
+    //   playerSelectedTilesArr.indexOf(identifier) === -1) {
+    //   playerSelectedTilesArr.push(identifier);
+    
+    if (!checkHit(targetRow, targetCol)) {
+      $($selectedTile).append(whitePeg)
+    } else {
+      opponentShips[oppTargetShip].hits += 1;
+      console.log('checkHit ship hits: ', opponentShips[oppTargetShip].hits);
+      $($selectedTile).append(redPeg);
+    }
+
+    if (opponentShips[oppTargetShip]) {
+      if (opponentShips[oppTargetShip].hits === opponentShips[oppTargetShip].holes) {
+        if (opponentShips[oppTargetShip].name === 'battleship') {
+          console.log('Sank the Battleship. You win!', opponentShips[oppTargetShip]);
+        }
       }
     }
-    console.log($selectedTile);
+    // console.log($selectedTile);
   };
 
   /**
