@@ -198,7 +198,7 @@ $(document).ready(() => {
     } else {
       let rowDiff = Math.abs(rowMax - startX)
       if (rowDiff < size) {
-        startY = rowMax - size;
+        startX = rowMax - size;
       }
       end = startX + size;
       for (let i = startY; i < end; i += 1) {
@@ -218,6 +218,7 @@ $(document).ready(() => {
           startY += 1;
           attemptPlacement(startX, startY, orientation, size, ship);
         } else {
+          console.log('Placement failed. Failed ship: ', ship, { startY });
           return;
         }
       }
@@ -239,7 +240,7 @@ $(document).ready(() => {
       let randOrientation = Math.floor(Math.random() * 2) + 1;
       randOrientation === 1 ? randOrientation = 'horizontal' : randOrientation = 'vertical';
       
-      randOrientation = 'horizontal'; // For development purposes only. REMOVE
+      // randOrientation = 'horizontal'; // For development purposes only. REMOVE
 
       // Generate a randomized tile to start attempted placement
       // randStartX will refer to the row and randStartY will refer to the column
