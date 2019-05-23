@@ -198,7 +198,28 @@ $(document).ready(() => {
     } else {
       let rowDiff = Math.abs(rowMax - startX)
       if (rowDiff < size) {
-        startX = rowMax - size;
+        startY = rowMax - size;
+      }
+      end = startX + size;
+      for (let i = startY; i < end; i += 1) {
+        if (opponentBoardArr[startY][i] !== null) {
+          isClear = false;
+        }
+      }
+      if (isClear === true) {
+        for (let i = startX; i < end; i += 1) {
+          opponentBoardArr[startY][i] = ship;
+        }
+      } else {
+        if (startY <= 5 && startY - 1 > 0) {
+          startY -= 1;
+          attemptPlacement(startX, startY, orientation, size, ship);
+        } else if (startY > 5 && startX + 1 <= colMax) {
+          startY += 1;
+          attemptPlacement(startX, startY, orientation, size, ship);
+        } else {
+          return;
+        }
       }
       console.log('Updated startX', startX);
     }
