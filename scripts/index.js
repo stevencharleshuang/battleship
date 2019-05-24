@@ -244,8 +244,6 @@ $(document).ready(() => {
       // Generate a randomized orientation for placement
       let randOrientation = Math.floor(Math.random() * 2) + 1;
       randOrientation === 1 ? randOrientation = 'horizontal' : randOrientation = 'vertical';
-      
-      // randOrientation = 'horizontal'; // For development purposes only. REMOVE
 
       // Generate a randomized tile to start attempted placement
       // randStartX will refer to the row and randStartY will refer to the column
