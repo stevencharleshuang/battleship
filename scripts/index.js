@@ -159,6 +159,7 @@ $(document).ready(() => {
   const attemptPlacement = (startX, startY, orientation, size, ship) => {
     const colMax = 10;
     const rowMax = 10;
+    // Defined as the end coordinate X or Y later defined by ship size and orientation
     let end;
     let isClear = true;
 
@@ -169,7 +170,6 @@ $(document).ready(() => {
       let colDiff = Math.abs(colMax - startY);
       if (colDiff < size) {
         startY = colMax - size;
-        console.log('Updated startY', startY);
       }
       end = startY + size;
       // iterate the board arr by column arr[i][j]
@@ -178,55 +178,56 @@ $(document).ready(() => {
           isClear = false;
         }
       }
-      // if the row from startY to startY + size === null, place the ship
+      // if the row from startY to end === null, place the ship
       if (isClear === true) {
         for (let i = startY; i < end; i += 1) {
           opponentBoardArr[startX][i] = ship;
         }
+        // If not clear, update coordinates or orientation and re-attempt placement recursively
       } else {
         if (startX <= 5 && startX - 1 > 0) {
-          orientation = 'vertical';
           startX -= 1;
           attemptPlacement(startX, startY, orientation, size, ship);
         } else if (startX > 5 && startX + 1 <= rowMax) {
-          orientation = 'vertical';
           startX += 1;
           attemptPlacement(startX, startY, orientation, size, ship);
         } else {
-          console.log('Placement failed. Failed ship: ', ship, { startY });
-          return;
+          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startY });
+          orientation = 'vertical';
+          attemptPlacement(startX, startY, orientation, size, ship);
         }
       }
-    // Attempt vertical placement
+    // Attempt vertical placement. Logic mirrors horizontal placement
     } else {
       let rowDiff = Math.abs(rowMax - startX);
+      
       if (rowDiff < size) {
         startX = rowMax - size;
       }
+
       end = startX + size;
-      for (let i = startY; i < end; i += 1) {
+      
+      for (let i = startX; i < end; i += 1) {
         if (opponentBoardArr[i][startY] !== null) {
           isClear = false;
         }
       }
+      
       if (isClear === true) {
-        console.log('placing vertically');
-        // If there is no ship overlap, place the ship
         for (let i = startX; i < end; i += 1) {
           opponentBoardArr[i][startY] = ship;
         }
       } else {
         if (startY <= 5 && startY - 1 > 0) {
           startY -= 1;
-          orientation = 'horizontal';
           attemptPlacement(startX, startY, orientation, size, ship);
-        } else if (startY > 5 && startX + 1 <= colMax) {
-          orientation = 'horizontal';
+        } else if (startY > 5 && startY + 1 <= colMax) {
           startY += 1;
           attemptPlacement(startX, startY, orientation, size, ship);
         } else {
-          console.log('Placement failed. Failed ship: ', ship, { startY });
-          return;
+          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startY });
+          orientation = 'horizontal';
+          attemptPlacement(startX, startY, orientation, size, ship);
         }
       }
     }
@@ -255,7 +256,6 @@ $(document).ready(() => {
       let size = opponentShips[ship].holes;
       // Call attemptPlacement(startTile, orientation, size)
       attemptPlacement(randStartX, randStartY, randOrientation, size, ship);
-      console.log({ randOrientation, randStartX, randStartY, size, ship });
     }
     console.log('opponentBoardArr', opponentBoardArr);
   }
