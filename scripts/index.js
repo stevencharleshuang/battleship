@@ -166,7 +166,7 @@ $(document).ready(() => {
     // Attempt horizontal placement
     if (orientation === 'horizontal') {
       // Check if there is suffient columns to fully place the ship
-      let colDiff = Math.abs(colMax - startY)
+      let colDiff = Math.abs(colMax - startY);
       if (colDiff < size) {
         startY = colMax - size;
         console.log('Updated startY', startY);
@@ -185,9 +185,11 @@ $(document).ready(() => {
         }
       } else {
         if (startX <= 5 && startX - 1 > 0) {
+          orientation = 'vertical';
           startX -= 1;
           attemptPlacement(startX, startY, orientation, size, ship);
         } else if (startX > 5 && startX + 1 <= rowMax) {
+          orientation = 'vertical';
           startX += 1;
           attemptPlacement(startX, startY, orientation, size, ship);
         } else {
@@ -197,26 +199,29 @@ $(document).ready(() => {
       }
     // Attempt vertical placement
     } else {
-      let rowDiff = Math.abs(rowMax - startX)
+      let rowDiff = Math.abs(rowMax - startX);
       if (rowDiff < size) {
         startX = rowMax - size;
       }
       end = startX + size;
       for (let i = startY; i < end; i += 1) {
-        if (opponentBoardArr[startY][i] !== null) {
+        if (opponentBoardArr[i][startY] !== null) {
           isClear = false;
         }
       }
       if (isClear === true) {
+        console.log('placing vertically');
         // If there is no ship overlap, place the ship
         for (let i = startX; i < end; i += 1) {
-          opponentBoardArr[startY][i] = ship;
+          opponentBoardArr[i][startY] = ship;
         }
       } else {
         if (startY <= 5 && startY - 1 > 0) {
           startY -= 1;
+          orientation = 'horizontal';
           attemptPlacement(startX, startY, orientation, size, ship);
         } else if (startY > 5 && startX + 1 <= colMax) {
+          orientation = 'horizontal';
           startY += 1;
           attemptPlacement(startX, startY, orientation, size, ship);
         } else {
@@ -278,14 +283,9 @@ $(document).ready(() => {
     let targetRow = e.target.dataset.row;
     let targetCol = e.target.dataset.col;
     let $selectedTile = $(e.target)[0];
-    let identifier = `${$selectedTile.dataset.row}${$selectedTile.dataset.col}`;
     let oppTargetShip = opponentBoardArr[targetRow][targetCol];
 
     console.log(opponentShips[oppTargetShip], { opponentShips });
-
-    // if ($selectedTile.classList[0] === 'tile' && 
-    //   playerSelectedTilesArr.indexOf(identifier) === -1) {
-    //   playerSelectedTilesArr.push(identifier);
     
     if (!checkHit(targetRow, targetCol)) {
       $($selectedTile).append(whitePeg)
@@ -302,7 +302,6 @@ $(document).ready(() => {
         }
       }
     }
-    // console.log($selectedTile);
   };
 
   /**
