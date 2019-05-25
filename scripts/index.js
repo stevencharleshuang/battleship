@@ -117,6 +117,7 @@ $(document).ready(() => {
   let playerSelectedTilesArr = [];
   let whitePeg = `<div class="peg white-peg"></div>`;
   let redPeg = `<div class="peg red-peg"></div>`;
+  let selectedPlayerShip = '';
 
   /**
    * @function createBoards
@@ -144,7 +145,7 @@ $(document).ready(() => {
             data-alpha="${row}"
             data-row="${i}" 
             data-col="${j}"
-            id="player-tile-${row}${col}">
+            id="player-tile-${i}-${col}">
             </div>`;
             
         let opponentTile = 
@@ -202,12 +203,42 @@ $(document).ready(() => {
     $($opponentTile).on('click', handleOpponentTileClick);
     $($playerTile)
       .on('mouseenter', (e) => {
+        let col = parseInt(e.target.dataset.col);
+        let row = parseInt(e.target.dataset.row);
+        let size;
+        let start;
+        let end;
         // $(e.target).css({ 'border': '3px solid green' });
-        $(e.target).toggleClass('highlight-tile');
+        if (!!selectedPlayerShip) {
+          size = playerShips[selectedPlayerShip].holes;
+
+          // Horizontal placement
+          start = col;
+          end = start + size - 1;
+
+          for (let i = start; i <= end; i += 1) {
+            $(`#player-tile-${row}-${i}`).toggleClass('highlight-tile');
+          }
+        }
       })
       .on('mouseleave', (e) => {
+        let col = parseInt(e.target.dataset.col);
+        let row = parseInt(e.target.dataset.row);
+        let size;
+        let start;
+        let end;
         // $(e.target).css({ 'border': '1px solid gray' });
-        $(e.target).toggleClass('highlight-tile');
+        if (!!selectedPlayerShip) {
+          size = playerShips[selectedPlayerShip].holes
+
+          // Horizontal placement
+          start = col;
+          end = start + size - 1;
+
+          for (let i = start; i <= end; i += 1) {
+            $(`#player-tile-${row}-${i}`).toggleClass('highlight-tile');
+          }
+        }
       });
 
     console.log({ playerBoardArr });
@@ -395,6 +426,12 @@ $(document).ready(() => {
     console.log({ playerBoardArr });
   };
 
+  /**
+   * @function addShipAvatars
+   * @description 
+   * Dynamically adds ship avatars to the ship avatars screen
+   * Adds an event listener to handle player ship avatar click event
+   */
   const addShipAvatars = () => {
     Object.keys(opponentShips).forEach((ship) => {
       $($opponentAvatarsList).append(`<li 
@@ -409,7 +446,7 @@ $(document).ready(() => {
         >${ship}</li>`);
     });
 
-    $('.player-ship-avatar').on('click', (e) => console.log(e.target.dataset.ship))
+    $('.player-ship-avatar').on('click', (e) => selectedPlayerShip = e.target.dataset.ship);
   };
 
   createBoards();
