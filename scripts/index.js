@@ -2,15 +2,67 @@ $(document).ready(() => {
   // jQ Selectors
   const 
     $gameArea = $('.game-area'),
-    $gameBoard = $('.game-board')
-    $playerBoard = $('#player-board');
-    $opponentBoard = $('#opponent-board');
+    $gameBoard = $('.game-board'),
+    $playerBoard = $('#player-board'),
+    $opponentBoard = $('#opponent-board'),
+    $opponentAvatarsList = $('.opponent-avatars-list'),
+    $playerAvatarsList = $('.player-avatars-list'),
+    $messages = $('.messages'),
+    $shipAvatars = $('.ship-avatars');
     let $playerTile;
     let $opponentTile;
     let $tile;
 
   // JS Var Decs
   let opponentShips = {
+    carrier: {
+      name: 'carrier',
+      holes: 5,
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
+    },
+    battleship: {
+      name: 'battleship',
+      holes: 4,
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
+    },
+    cruiser: {
+      name: 'cruiser',
+      holes: 3,
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
+    },
+    submarine: {
+      name: 'submarine',
+      holes: 3,
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
+    },
+    destroyer: {
+      name: 'destroyer',
+      holes: 2,
+      hits: 0,
+      orientation: '',
+      placementCol: 0,
+      placementRow: 0,
+      position: []
+    }
+  };
+
+  let playerShips = {
     carrier: {
       name: 'carrier',
       holes: 5,
@@ -337,13 +389,31 @@ $(document).ready(() => {
     let targetCol = e.target.dataset.col;
     let targetOrientation = 'horizontal'; // refactor this later
 
-    isPlayerPlacementValid(targetRow, targetCol, 'horizontal', 5);
+    // isPlayerPlacementValid(targetRow, targetCol, 'horizontal', 5);
 
     playerBoardArr[targetRow][targetCol] = 'carrier';
     console.log({ playerBoardArr });
   };
 
+  const addShipAvatars = () => {
+    Object.keys(opponentShips).forEach((ship) => {
+      $($opponentAvatarsList).append(`<li 
+        class="opponent-ship-avatar ship-avatar"
+        data-ship="${ship}"
+        >${ship}</li>`);
+    });
+    Object.keys(playerShips).forEach((ship) => {
+      $($playerAvatarsList).append(`<li 
+        class="player-ship-avatar ship-avatar"
+        data-ship="${ship}"
+        >${ship}</li>`);
+    });
+
+    $('.player-ship-avatar').on('click', (e) => console.log(e.target.dataset.ship))
+  };
+
   createBoards();
   placeOppShips();
+  addShipAvatars();
 });
 
