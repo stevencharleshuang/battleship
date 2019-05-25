@@ -7,6 +7,7 @@ $(document).ready(() => {
     $opponentBoard = $('#opponent-board'),
     $opponentAvatarsList = $('.opponent-avatars-list'),
     $playerAvatarsList = $('.player-avatars-list'),
+    $playerChangeOrientationBtn = $('.change-orientation-btn'),
     $messages = $('.messages'),
     $shipAvatars = $('.ship-avatars');
     let $playerTile;
@@ -118,6 +119,7 @@ $(document).ready(() => {
   let whitePeg = `<div class="peg white-peg"></div>`;
   let redPeg = `<div class="peg red-peg"></div>`;
   let selectedPlayerShip = '';
+  let playerPlacementOrientation = 'horizontal';
 
   /**
    * @function createBoards
@@ -155,7 +157,7 @@ $(document).ready(() => {
             data-alpha="${row}"
             data-row="${i}" 
             data-col="${j}"
-            id="opponent-tile-${row}${col}">
+            id="opponent-tile-${i}-${col}">
           </div>`;
 
         let colNum = 
@@ -202,44 +204,8 @@ $(document).ready(() => {
     $($playerTile).on('click', handlePlayerTileClick);
     $($opponentTile).on('click', handleOpponentTileClick);
     $($playerTile)
-      .on('mouseenter', (e) => {
-        let col = parseInt(e.target.dataset.col);
-        let row = parseInt(e.target.dataset.row);
-        let size;
-        let start;
-        let end;
-        // $(e.target).css({ 'border': '3px solid green' });
-        if (!!selectedPlayerShip) {
-          size = playerShips[selectedPlayerShip].holes;
-
-          // Horizontal placement
-          start = col;
-          end = start + size - 1;
-
-          for (let i = start; i <= end; i += 1) {
-            $(`#player-tile-${row}-${i}`).toggleClass('highlight-tile');
-          }
-        }
-      })
-      .on('mouseleave', (e) => {
-        let col = parseInt(e.target.dataset.col);
-        let row = parseInt(e.target.dataset.row);
-        let size;
-        let start;
-        let end;
-        // $(e.target).css({ 'border': '1px solid gray' });
-        if (!!selectedPlayerShip) {
-          size = playerShips[selectedPlayerShip].holes
-
-          // Horizontal placement
-          start = col;
-          end = start + size - 1;
-
-          for (let i = start; i <= end; i += 1) {
-            $(`#player-tile-${row}-${i}`).toggleClass('highlight-tile');
-          }
-        }
-      });
+      .on('mouseenter', handlePlayerPlacementMouseEnter)
+      .on('mouseleave', handlePlayerPlacementMouseLeave);
 
     console.log({ playerBoardArr });
    };
@@ -400,6 +366,76 @@ $(document).ready(() => {
     }
   };
 
+  /**
+   * @function handlePlayerPlacementMouseEnter
+   * @description
+   * Highlights a portion of the player board during placement phase
+   * Highlights number of tiles respective of currently selected ship size
+   * @param {object} e 
+   */
+  const handlePlayerPlacementMouseEnter = (e) => {
+    let col = parseInt(e.target.dataset.col);
+    let row = parseInt(e.target.dataset.row);
+    let size;
+    let start;
+    let end;
+    // $(e.target).css({ 'border': '3px solid green' });
+    if (!!selectedPlayerShip) {
+      size = playerShips[selectedPlayerShip].holes;
+      // Horizontal placement
+      if (playerPlacementOrientation === 'horizontal') {
+        start = col;
+        end = start + size - 1;
+  
+        for (let i = start; i <= end; i += 1) {
+          $(`#player-tile-${row}-${i}`).toggleClass('highlight-tile');
+        }
+      } else if (playerPlacementOrientation === 'vertical') {
+        start = row;
+        end = start + size - 1;
+  
+        for (let i = start; i <= end; i += 1) {
+          $(`#player-tile-${i}-${col}`).toggleClass('highlight-tile');
+        }
+      }
+    }
+  };
+
+  /**
+   * @function handlePlayerPlacementMouseLeave
+   * @description
+   * Un-highlights the portion of the player board highlighted from handPlayerPlacementMouseEnter
+   * @param {object} e 
+   */
+  const handlePlayerPlacementMouseLeave = (e) => {
+    let col = parseInt(e.target.dataset.col);
+    let row = parseInt(e.target.dataset.row);
+    let size;
+    let start;
+    let end;
+    // $(e.target).css({ 'border': '1px solid gray' });
+    if (!!selectedPlayerShip) {
+      size = playerShips[selectedPlayerShip].holes
+
+      // Horizontal placement
+      if (playerPlacementOrientation === 'horizontal') {
+        start = col;
+        end = start + size - 1;
+  
+        for (let i = start; i <= end; i += 1) {
+          $(`#player-tile-${row}-${i}`).toggleClass('highlight-tile');
+        }
+      } else if (playerPlacementOrientation === 'vertical') {
+        start = row;
+        end = start + size - 1;
+  
+        for (let i = start; i <= end; i += 1) {
+          $(`#player-tile-${i}-${col}`).toggleClass('highlight-tile');
+        }
+      }
+    }
+  };
+
   const isPlayerPlacementValid = (startX, startY, orientation, size) => {
     let end = startY + size;
 
@@ -448,6 +484,13 @@ $(document).ready(() => {
 
     $('.player-ship-avatar').on('click', (e) => selectedPlayerShip = e.target.dataset.ship);
   };
+
+  $($playerChangeOrientationBtn).on('click', () => {
+    playerPlacementOrientation === 'horizontal' ? 
+      playerPlacementOrientation = 'vertical' : 
+      playerPlacementOrientation = 'horizontal';
+    console.log('Changed orientation', playerPlacementOrientation);
+  });
 
   createBoards();
   placeOppShips();

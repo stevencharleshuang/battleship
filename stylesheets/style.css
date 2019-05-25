@@ -126,7 +126,9 @@ footer {
   bottom: 0;
 }
 
-.opponent-tile, .player-ship-avatar:hover {
+.opponent-tile, 
+.btn,
+.player-ship-avatar:hover {
   cursor: pointer;
 }
 
@@ -146,4 +148,24 @@ footer {
 
 .highlight-tile {
   border: 3px solid green;
+}
+
+.change-orientation-btn {
+
+}
+
+.btn {
+  background: rgba(255, 255, 255, 0);
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 5px;
+}
+
+.btn:hover {
+  background: white;
+  color: dodgerblue;
 }
