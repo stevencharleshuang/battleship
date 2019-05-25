@@ -108,3 +108,7 @@ footer {
 .red-peg {
   background: red;
 }
+
+.highlight-tile {
+  border: 3px solid green;
+}

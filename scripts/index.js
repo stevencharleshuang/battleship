@@ -89,15 +89,17 @@ $(document).ready(() => {
           `<div 
             class="tile player-tile"
             data-type="player"
+            data-alpha="${row}"
             data-row="${i}" 
             data-col="${j}"
             id="player-tile-${row}${col}">
-          </div>`;
-
+            </div>`;
+            
         let opponentTile = 
           `<div 
             class="tile opponent-tile"
-            data-type="opponent" 
+            data-type="opponent"
+            data-alpha="${row}"
             data-row="${i}" 
             data-col="${j}"
             id="opponent-tile-${row}${col}">
@@ -137,7 +139,7 @@ $(document).ready(() => {
       }
       rowCharCode += 1;
     }
-        
+    
     // Update jQ Selector Vars
     $tile = $('.tile');
     $playerTile = $('.player-tile');
@@ -146,7 +148,18 @@ $(document).ready(() => {
     // Set tile click handlers
     $($playerTile).on('click', handlePlayerTileClick);
     $($opponentTile).on('click', handleOpponentTileClick);
-  };
+    $($playerTile)
+      .on('mouseenter', (e) => {
+        // $(e.target).css({ 'border': '3px solid green' });
+        $(e.target).toggleClass('highlight-tile');
+      })
+      .on('mouseleave', (e) => {
+        // $(e.target).css({ 'border': '1px solid gray' });
+        $(e.target).toggleClass('highlight-tile');
+      });
+
+    console.log({ playerBoardArr });
+   };
 
   /**
    * @function attemptPlacement
@@ -297,9 +310,20 @@ $(document).ready(() => {
       if (opponentShips[oppTargetShip].hits === opponentShips[oppTargetShip].holes) {
         if (opponentShips[oppTargetShip].name === 'battleship') {
           console.log('Sank the Battleship. You win!', opponentShips[oppTargetShip]);
+        } else {
+          console.log(`Sank the ${opponentShips[oppTargetShip].name}`);
         }
       }
     }
+  };
+
+  const isPlayerPlacementValid = (startX, startY, orientation, size) => {
+    let end = startY + size;
+
+    for (let i = startY; i < end; i += 1) {
+
+    }
+    return true;
   };
 
   /**
@@ -309,6 +333,14 @@ $(document).ready(() => {
    */
   const handlePlayerTileClick = (e) => {
     console.log('Player tile clicked', e);
+    let targetRow = e.target.dataset.row;
+    let targetCol = e.target.dataset.col;
+    let targetOrientation = 'horizontal'; // refactor this later
+
+    isPlayerPlacementValid(targetRow, targetCol, 'horizontal', 5);
+
+    playerBoardArr[targetRow][targetCol] = 'carrier';
+    console.log({ playerBoardArr });
   };
 
   createBoards();
