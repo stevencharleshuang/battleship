@@ -436,14 +436,65 @@ $(document).ready(() => {
     }
   };
 
+  /**
+   * @function isPlayerPlacementValid
+   * @description Checks if a selected tile's placement range is valid, returns a Boolean 
+   * @param {number} startX 
+   * @param {number} startY 
+   * @param {string} orientation 
+   * @param {number} size 
+   */
   const isPlayerPlacementValid = (startX, startY, orientation, size) => {
-    let end = startY + size;
+    let end;
+    console.log('isPlayerPlacementValid args: ', startX, startY, orientation, size);
 
-    for (let i = startY; i < end; i += 1) {
-
+    if (orientation === 'horizontal') {
+      end = startY + size;
+      for (let i = startY; i < end; i += 1) {
+        // Check if the target placement range is clear (null)
+        if (playerBoardArr[startX][i] !== null) {
+          return false;
+        }
+        // Check if the target placement range exceeds the player board
+      }
+      return true;
+    } else if (orientation === 'vertical') {
+      end = startX + size;
+      for (let i = startX; i < end; i += 1) {
+        // Check if the target placement range exceeds the player board
+        if (playerBoardArr[i][startY] !== null) {
+          return false;
+        }
+      }
+      return true;
     }
-    return true;
+    return false;
   };
+
+  /**
+   * @function placePlayerShips
+   * @description Places the selected ship into the player's board arr
+   * @param {number} startX 
+   * @param {number} startY 
+   * @param {string} orientation 
+   * @param {number} size 
+   * @param {string} ship 
+   */
+  const placePlayerShips = (startX, startY, orientation, size, ship) => {
+    let end;
+
+    if (orientation === 'horizontal') {
+      end = startY + size;
+      for (let i = startY; i < end; i += 1) {
+        playerBoardArr[startX][i] = ship;
+      }
+    } else if (orientation === 'vertical') {
+      end = startX + size;
+      for (let i = startX; i < end; i += 1) {
+        playerBoardArr[i][startY] = ship;
+      }
+    }
+  }
 
   /**
    * @function handlePlayerTileClick
@@ -451,14 +502,19 @@ $(document).ready(() => {
    * @param {object} e 
    */
   const handlePlayerTileClick = (e) => {
-    console.log('Player tile clicked', e);
-    let targetRow = e.target.dataset.row;
-    let targetCol = e.target.dataset.col;
-    let targetOrientation = 'horizontal'; // refactor this later
+    let targetRow = parseInt(e.target.dataset.row);
+    let targetCol = parseInt(e.target.dataset.col);
+    let targetOrientation = playerPlacementOrientation;
+    let targetShipSize = parseInt(playerShips[selectedPlayerShip].holes);
+    
+    // Validate intended placement
+    if (!!isPlayerPlacementValid(targetRow, targetCol, targetOrientation, targetShipSize)) {
+      console.log('Valid placement');
+      placePlayerShips(targetRow, targetCol, targetOrientation, targetShipSize, selectedPlayerShip);
+    } else {
+      console.log('Invalid placement');
+    }
 
-    // isPlayerPlacementValid(targetRow, targetCol, 'horizontal', 5);
-
-    playerBoardArr[targetRow][targetCol] = 'carrier';
     console.log({ playerBoardArr });
   };
 
