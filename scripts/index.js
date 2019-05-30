@@ -114,7 +114,7 @@ $(document).ready(() => {
   let opponentBoardArr = [[],[],[],[],[],[],[],[],[],[],[]];
   let playerBoardArr = [[],[],[],[],[],[],[],[],[],[],[]];
   let opponentShipsArr = [];
-  let playerShipsArr = [];
+  let playerPlacedShips = [];
   let playerSelectedTilesArr = [];
   let whitePeg = `<div class="peg white-peg"></div>`;
   let redPeg = `<div class="peg red-peg"></div>`;
@@ -444,10 +444,14 @@ $(document).ready(() => {
    * @param {string} orientation 
    * @param {number} size 
    */
-  const isPlayerPlacementValid = (startX, startY, orientation, size) => {
+  const isPlayerPlacementValid = (startX, startY, orientation, size, ship) => {
     let end;
-    console.log('isPlayerPlacementValid args: ', startX, startY, orientation, size);
 
+    // Check if ship has already been placed
+    if (playerPlacedShips.indexOf(ship) > -1) {
+      console.log('Current selected ship already placed');
+      return false;
+    }
     if (orientation === 'horizontal') {
       end = startY + size;
       for (let i = startY; i < end; i += 1) {
@@ -487,6 +491,7 @@ $(document).ready(() => {
       end = startY + size;
       for (let i = startY; i < end; i += 1) {
         playerBoardArr[startX][i] = ship;
+        $(`#player-tile-${startX}-${i}`).toggleClass('.placed-ship-tile');
       }
     } else if (orientation === 'vertical') {
       end = startX + size;
@@ -494,6 +499,8 @@ $(document).ready(() => {
         playerBoardArr[i][startY] = ship;
       }
     }
+
+    playerPlacedShips.push(ship);
   }
 
   /**
@@ -508,7 +515,7 @@ $(document).ready(() => {
     let targetShipSize = parseInt(playerShips[selectedPlayerShip].holes);
     
     // Validate intended placement
-    if (!!isPlayerPlacementValid(targetRow, targetCol, targetOrientation, targetShipSize)) {
+    if (!!isPlayerPlacementValid(targetRow, targetCol, targetOrientation, targetShipSize, selectedPlayerShip)) {
       console.log('Valid placement');
       placePlayerShips(targetRow, targetCol, targetOrientation, targetShipSize, selectedPlayerShip);
     } else {

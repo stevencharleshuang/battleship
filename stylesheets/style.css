@@ -150,6 +150,10 @@ footer {
   border: 3px solid green;
 }
 
+.placed-ship-tile {
+  background: orangered;
+}
+
 .change-orientation-btn {
 
 }
