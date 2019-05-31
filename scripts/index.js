@@ -491,12 +491,13 @@ $(document).ready(() => {
       end = startY + size;
       for (let i = startY; i < end; i += 1) {
         playerBoardArr[startX][i] = ship;
-        $(`#player-tile-${startX}-${i}`).toggleClass('.placed-ship-tile');
+        $(`#player-tile-${startX}-${i}`).toggleClass('placed-ship-tile');
       }
     } else if (orientation === 'vertical') {
       end = startX + size;
       for (let i = startX; i < end; i += 1) {
         playerBoardArr[i][startY] = ship;
+        $(`#player-tile-${i}-${startY}`).toggleClass('placed-ship-tile');
       }
     }
 
