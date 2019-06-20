@@ -13,11 +13,33 @@
   </header>
   <main>
     <div class="game-area">
+      <div class="ship-avatars">
+        <div class="opponent-ship-avatars">
+          <h2>Opponent Ships</h2>
+          <ul class="opponent-avatars-list avatars-list">
+
+          </ul>
+        </div>
+        <div class="player-ship-avatars">
+          <h2>Player Ships</h2>
+          <ul class="player-avatars-list avatars-list">
+
+          </ul>
+        </div>
+      </div>
       <div class="game-board">
         <h2>Opponent's Board</h2>
         <div class="board" id="opponent-board"></div>
         <h2>Player's Board</h2>
         <div class="board" id="player-board"></div>
+      </div>
+      <div class="message-box">
+        <h2>Messages</h2>
+        <div class="messages">
+          <h4>Welcome to Steve Battleship!</h4>
+          <p>Please place your ships</p>
+          <button class="change-orientation-btn btn">Change Ship Orientation</button>
+        </div>
       </div>
     </div>
   </main>
@@ -25,7 +47,6 @@
     Made with &#9829; by Steve 2019
   </footer>
   <script src="scripts/libs/jquery-3.3.1.slim.min.js"></script>
-  <script src="scripts/attemptPlacement.js"></script>
   <script src="scripts/index.js"></script>
 </body>
 </html>

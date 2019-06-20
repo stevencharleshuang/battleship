@@ -19,18 +19,53 @@ header {}
 main {}
 
 .game-area {
-  padding: 10px 0 0;
+  padding: 0;
   margin: 0 auto 50px;
   height: auto;
-  width: 330px;
+  width: 990px;
   background: dodgerblue;
+  display: grid;
+  grid-template-columns: 330px 330px 330px;
+  border-radius: 5px;
 }
 
 .game-board {
 }
 
 .board {
-  margin: 10px auto;
+  margin: 0 auto;
+}
+
+.ship-avatars {
+  background: rgba(0, 0, 0, 0.3);
+  display: grid;
+  grid-template-rows: 50% 50%;
+}
+
+.avatars-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-flow: column nowrap;
+  height: 80%;
+  justify-content: space-evenly;
+}
+
+.ship-avatar {
+  margin: 0;
+  height: 50px;
+  line-height: 50px;
+  width: 100%;
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.message-box {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.messages {
+  text-align: center;
 }
 
 #player-board {
@@ -91,8 +126,14 @@ footer {
   bottom: 0;
 }
 
-.opponent-tile:hover {
+.opponent-tile, 
+.btn,
+.player-ship-avatar:hover {
   cursor: pointer;
+}
+
+.selected-player-ship-avatar {
+  border: 2px solid darkgreen;
 }
 
 .peg {
@@ -107,4 +148,32 @@ footer {
 
 .red-peg {
   background: red;
+}
+
+.highlight-tile {
+  border: 3px solid green;
+}
+
+.placed-ship-tile {
+  background: darkgray;
+}
+
+.change-orientation-btn {
+
+}
+
+.btn {
+  background: rgba(255, 255, 255, 0);
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 5px;
+}
+
+.btn:hover {
+  background: white;
+  color: dodgerblue;
 }
