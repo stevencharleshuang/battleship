@@ -260,13 +260,11 @@ $(document).ready(() => {
           // If already attempted recursion with changed orientation, 
           // replace existing start coordinates with new random coordinates
           if (!!utterFail) {
-            console.log('Placement utter failure. Resetting coordinates. Recursing. Failed ship: ', ship, { startX, startY });
             startX = Math.floor(Math.random() * 9) + 1;
             startY = Math.floor(Math.random() * 9) + 1;
             return attemptPlacement(startX, startY, orientation, size, ship);
           }
 
-          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startX, startY });
           utterFail = true;
           return attemptPlacement(startX, startY, orientation, size, ship);
         }
@@ -303,13 +301,11 @@ $(document).ready(() => {
           orientation = 'horizontal';
 
           if (!!utterFail) {
-            console.log('Placement utter failure. Resetting coordinates. Recursing. Failed ship: ', ship, { startX, startY });
             startX = Math.floor(Math.random() * 9) + 1;
             startY = Math.floor(Math.random() * 9) + 1;
             return attemptPlacement(startX, startY, orientation, size, ship);
           }
 
-          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startX, startY });
           utterFail = true;
           return attemptPlacement(startX, startY, orientation, size, ship);
         }
@@ -525,7 +521,6 @@ $(document).ready(() => {
 
     playerPlacedShips.push(ship);
     if (playerPlacedShips.length === 5) {
-      console.log('All player ships placed!')
       $($messages).text(`All player ships placed. Let's begin!`);
     }
   }
@@ -576,8 +571,7 @@ $(document).ready(() => {
     let prevSelected;
     $('.player-ship-avatar').on('click', (e) => {
       if (!!prevSelected) $(prevSelected).toggleClass('selected-player-ship-avatar');
-      
-      console.log(e);
+
       selectedPlayerShip = e.target.dataset.ship;
       $(`#player-ship-avatar-${e.target.dataset.ship}`).toggleClass('selected-player-ship-avatar');
       prevSelected = `#player-ship-avatar-${e.target.dataset.ship}`;
@@ -588,7 +582,6 @@ $(document).ready(() => {
     playerPlacementOrientation === 'horizontal' ? 
       playerPlacementOrientation = 'vertical' : 
       playerPlacementOrientation = 'horizontal';
-    console.log('Changed orientation', playerPlacementOrientation);
   });
 
   createBoards();
