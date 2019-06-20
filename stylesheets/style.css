@@ -132,6 +132,10 @@ footer {
   cursor: pointer;
 }
 
+.selected-player-ship-avatar {
+  border: 2px solid darkgreen;
+}
+
 .peg {
   width: 15px;
   height: 15px;
@@ -151,7 +155,7 @@ footer {
 }
 
 .placed-ship-tile {
-  background: orangered;
+  background: darkgray;
 }
 
 .change-orientation-btn {

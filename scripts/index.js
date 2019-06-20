@@ -120,6 +120,7 @@ $(document).ready(() => {
   let redPeg = `<div class="peg red-peg"></div>`;
   let selectedPlayerShip = '';
   let playerPlacementOrientation = 'horizontal';
+  let utterFail = false;
 
   /**
    * @function createBoards
@@ -245,18 +246,29 @@ $(document).ready(() => {
         for (let i = startY; i < end; i += 1) {
           opponentBoardArr[startX][i] = ship;
         }
+        return utterFail = false;
         // If not clear, update coordinates or orientation and re-attempt placement recursively
       } else {
         if (startX <= 5 && startX - 1 > 0) {
           startX -= 1;
-          attemptPlacement(startX, startY, orientation, size, ship);
+          return attemptPlacement(startX, startY, orientation, size, ship);
         } else if (startX > 5 && startX + 1 <= rowMax) {
           startX += 1;
-          attemptPlacement(startX, startY, orientation, size, ship);
+          return attemptPlacement(startX, startY, orientation, size, ship);
         } else {
-          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startY });
           orientation = 'vertical';
-          attemptPlacement(startX, startY, orientation, size, ship);
+          // If already attempted recursion with changed orientation, 
+          // replace existing start coordinates with new random coordinates
+          if (!!utterFail) {
+            console.log('Placement utter failure. Resetting coordinates. Recursing. Failed ship: ', ship, { startX, startY });
+            startX = Math.floor(Math.random() * 9) + 1;
+            startY = Math.floor(Math.random() * 9) + 1;
+            return attemptPlacement(startX, startY, orientation, size, ship);
+          }
+
+          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startX, startY });
+          utterFail = true;
+          return attemptPlacement(startX, startY, orientation, size, ship);
         }
       }
     // Attempt vertical placement. Logic mirrors horizontal placement
@@ -279,17 +291,27 @@ $(document).ready(() => {
         for (let i = startX; i < end; i += 1) {
           opponentBoardArr[i][startY] = ship;
         }
+        return utterFail = false;
       } else {
         if (startY <= 5 && startY - 1 > 0) {
           startY -= 1;
-          attemptPlacement(startX, startY, orientation, size, ship);
+          return attemptPlacement(startX, startY, orientation, size, ship);
         } else if (startY > 5 && startY + 1 <= colMax) {
           startY += 1;
-          attemptPlacement(startX, startY, orientation, size, ship);
+          return attemptPlacement(startX, startY, orientation, size, ship);
         } else {
-          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startY });
           orientation = 'horizontal';
-          attemptPlacement(startX, startY, orientation, size, ship);
+
+          if (!!utterFail) {
+            console.log('Placement utter failure. Resetting coordinates. Recursing. Failed ship: ', ship, { startX, startY });
+            startX = Math.floor(Math.random() * 9) + 1;
+            startY = Math.floor(Math.random() * 9) + 1;
+            return attemptPlacement(startX, startY, orientation, size, ship);
+          }
+
+          console.log('Placement failed. Update orientation. Failed ship: ', ship, { startX, startY });
+          utterFail = true;
+          return attemptPlacement(startX, startY, orientation, size, ship);
         }
       }
     }
@@ -491,16 +513,21 @@ $(document).ready(() => {
       end = startY + size;
       for (let i = startY; i < end; i += 1) {
         playerBoardArr[startX][i] = ship;
-        $(`#player-tile-${startX}-${i}`).toggleClass('.placed-ship-tile');
+        $(`#player-tile-${startX}-${i}`).toggleClass('placed-ship-tile');
       }
     } else if (orientation === 'vertical') {
       end = startX + size;
       for (let i = startX; i < end; i += 1) {
         playerBoardArr[i][startY] = ship;
+        $(`#player-tile-${i}-${startY}`).toggleClass('placed-ship-tile');
       }
     }
 
     playerPlacedShips.push(ship);
+    if (playerPlacedShips.length === 5) {
+      console.log('All player ships placed!')
+      $($messages).text(`All player ships placed. Let's begin!`);
+    }
   }
 
   /**
@@ -541,11 +568,20 @@ $(document).ready(() => {
     Object.keys(playerShips).forEach((ship) => {
       $($playerAvatarsList).append(`<li 
         class="player-ship-avatar ship-avatar"
+        id="player-ship-avatar-${ship}"
         data-ship="${ship}"
         >${ship}</li>`);
     });
-
-    $('.player-ship-avatar').on('click', (e) => selectedPlayerShip = e.target.dataset.ship);
+    // Handle player ship avatar selection
+    let prevSelected;
+    $('.player-ship-avatar').on('click', (e) => {
+      if (!!prevSelected) $(prevSelected).toggleClass('selected-player-ship-avatar');
+      
+      console.log(e);
+      selectedPlayerShip = e.target.dataset.ship;
+      $(`#player-ship-avatar-${e.target.dataset.ship}`).toggleClass('selected-player-ship-avatar');
+      prevSelected = `#player-ship-avatar-${e.target.dataset.ship}`;
+    });
   };
 
   $($playerChangeOrientationBtn).on('click', () => {
