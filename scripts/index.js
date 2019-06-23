@@ -527,7 +527,7 @@ const placePlayerShips = (startX, startY, orientation, size, ship) => {
 
   playerPlacedShips.push(ship);
   if (playerPlacedShips.length === 5) {
-    updateMsgBox(`All player ships placed. Let's begin!`);
+    setTimeout(() => updateMsgBox(`All player ships placed. Let's begin!`), 1500);
   }
 }
 
@@ -545,9 +545,9 @@ const handlePlayerTileClick = (e) => {
   // Validate intended placement
   if (!!isPlayerPlacementValid(targetRow, targetCol, targetOrientation, targetShipSize, selectedPlayerShip)) {
     updateMsgBox(`Placed the ${selectedPlayerShip}!`, true, 500, true);
-    placePlayerShips(targetRow, targetCol, targetOrientation, targetShipSize, selectedPlayerShip);
     setTimeout(() => updateMsgBox(welcomeMsg), 500);
     setTimeout(() => $('.change-orientation-btn').on('click', handleChangeOrientation), 1000);
+    placePlayerShips(targetRow, targetCol, targetOrientation, targetShipSize, selectedPlayerShip);
   } else {
     updateMsgBox('Invalid placement', true, 500, true);
     setTimeout(() => updateMsgBox(welcomeMsg), 500);
