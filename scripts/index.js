@@ -459,7 +459,6 @@ $(document).ready(() => {
         if (playerBoardArr[startX][i] !== null) {
           return false;
         }
-        // Check if the target placement range exceeds the player board
       }
       return true;
     } else if (orientation === 'vertical') {
